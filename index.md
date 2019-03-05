@@ -1,3 +1,42 @@
+---
+layout: default
+---
+<body class="wrap">
+  <div class="flexbox">
+    <nav class="main-nav hide-on-mobiles">
+      <ul>
+  <li class="">
+    <a href="/access/index.html">Access - Windows Machine</a>
+  </li>
+  <li class="">
+    <a href="/giddy/index.html">Giddy - Windows Machine</a>
+  </li>
+  <li class="">
+    <a href="/access/Ypuffy.html">Ypuffy - OpenBSD Machine</a>
+  </li>
+  
+
+  <p>
+  This machine is showing only 3 open ports and one of them allow anonymous access in which you can find a mdb file and inside it an email with password for a user to login. Than it become more hard as it's a Windows machine but the trick is proper enumeration. Then you find that Powershell is enable and Administrator credentials are locally stored with DPAPI. Multiple ways are available to connect, I tried to elustrate use of Powershell, Unicorn, Empire and Mimikatz as attacking vectors.
+  </p>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## Welcome to GitHub Pages
 
 You can use the [editor on GitHub](https://github.com/clarkkent-repo/clarkkent-repo.github.io/edit/master/index.md) to maintain and preview the content for your website in Markdown files.
