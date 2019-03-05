@@ -10,7 +10,7 @@ layout: default
     <a href="/">Home</a>
   </li>
   <p>
-  This machine is showing only 3 open ports and one if it allow anonymous access in which you can find a mdb file and inside it an email with user password. Than it become more hard as it's a Windows machine but the trick is proper enumeration. Then you find that Powershell is enable and Administrator credentials are locally stored with DPAPI. 
+  This machine is showing only 3 open ports and one of them allow anonymous access in which you can find a mdb file and inside it an email with password for a user to login. Than it become more hard as it's a Windows machine but the trick is proper enumeration. Then you find that Powershell is enable and Administrator credentials are locally stored with DPAPI. Multiple ways are available to connect, I tried to elustrate use of Powershell, Unicorn, Empire and Mimikatz as attacking vectors.
   </p>
 </ul>
 
@@ -42,11 +42,11 @@ layout: default
   <p></p>
   <div class="post-content">
 						<div class="embed-container">
-							<img src="./resources/access.png" />
+							<img src="./resources/machine.png" />
 						</div>
 </br>
 						<div class="embed-container">
-							<img src="./resources/diagram.png" />
+							<img src="./resources/diag.png" />
 						</div>
 						
     <p><strong>Machine: Access<br />
@@ -140,7 +140,7 @@ Half of machine done.
 </div>
 </br>
 <div>
-	User to root path
+	<b>User to root path</b></br>
 A bit of enumeration
 </div>
 <p>
@@ -166,7 +166,7 @@ A bit of enumeration
 <div>
 Login: = sa
 Password: = htrcy@HXeryNJCTRHcnb45CJRY
-
+</br>
 Not sure how that is useful because from here I got stuck and not able to use this password.
 
 </div>
@@ -301,10 +301,14 @@ Powershell is running, let’s make a reverse shell
 </br>
 <div>
 <p>Unicorn will generate two files:
-•unicorn.rc for opening msf and configuring it automatically.
-•powershell_attack.txt for copying the content on victim and executing it. It it is not
+</br>
+•unicorn.rc for opening msf and configuring it automatically.
+</br>
+•powershell_attack.txt for copying the content on victim and executing it. It it is not
 working properly, upload it as a .bat and then execute it.
+</br>
 Msfconsole –r unicorn/unicorn.rc
+</br>
 Administrator is on admins group so, if we wanted to bypass UAC we just needed to use any of
 the typical methods.
 </p>
@@ -444,19 +448,18 @@ the typical methods.
 </br>
 Download the content of the files so we can decrypt/analyze locally.
 </p>
-</div>
 <p>
 						<div class="embed-container">
 							<img src="./resources/mimikatz4.png" />
 						</div>
 </p><p></p>
-</div>
+
 <p>
 						<div class="embed-container">
 							<img src="./resources/mimikatz5.png" />
 						</div>
 </p><p>Run mimikatz on windows environment and decrypt the stored credentials with dpapi</p>
-</div>
+
 <p>
 						<div class="embed-container">
 							<img src="./resources/mimikatz6.png" />
@@ -468,7 +471,7 @@ Download the content of the files so we can decrypt/analyze locally.
 -	https://www.passcape.com/windows_password_recovery_dpapi_master_key
 -	https://www.synacktiv.com/ressources/univershell_2017_dpapi.pdf
 </p>
-</div>
+
 <p>
 						<div class="embed-container">
 							<img src="./resources/mimikatzcred.png" />
