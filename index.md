@@ -21,7 +21,25 @@ layout: default
     <a href="/ypuffy/index.html">Ypuffy - OpenBSD Machine</a>
   </li>
 </ul>
-
+</nav>
+</div>
+<!-- Default Statcounter code for My Github site
+https://clarkkent-repo.github.io/ -->
+<script type="text/javascript">
+var sc_project=11968832; 
+var sc_invisible=0; 
+var sc_security="e8f3029f"; 
+var sc_https=1; 
+var scJsHost = "https://";
+document.write("<sc"+"ript type='text/javascript' src='" + scJsHost+
+"statcounter.com/counter/counter.js'></"+"script>");
+</script>
+<noscript><div class="statcounter"><a title="Web Analytics"
+href="https://statcounter.com/" target="_blank"><img class="statcounter"
+src="https://c.statcounter.com/11968832/0/e8f3029f/0/" alt="Web
+Analytics"></a></div></noscript>
+<!-- End of Statcounter Code -->
+</body>
 
 
 
