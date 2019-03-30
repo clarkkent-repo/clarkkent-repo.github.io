@@ -9,6 +9,9 @@ layout: default
     <nav class="main-nav hide-on-mobiles">
       <ul>
   <li class="">
+    <a href="/curling/index.html">Curling - Linux Machine - 02.11.2018 - Decommissioned: 30.03.2019</a>
+  </li>
+  <li class="">
     <a href="/carrier/index.html">Carrier - Linux Machine - 27.10.2018 - Decommissioned: 16.03.2019</a>
   </li>
   <li class="">
