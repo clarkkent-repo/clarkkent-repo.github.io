@@ -9,6 +9,9 @@ layout: default
     <nav class="main-nav hide-on-mobiles">
       <ul>
   <li class="">
+    <a href="/teacher/index.html">Teacher - Linux Machine - 08.12.2018 - Decommissioned: 20.04.2019</a>
+  </li>
+  <li class="">
     <a href="/curling/index.html">Curling - Linux Machine - 02.11.2018 - Decommissioned: 30.03.2019</a>
   </li>
   <li class="">
