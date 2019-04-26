@@ -1,0 +1,252 @@
+---
+layout: default
+---
+<body class="wrap">
+  <header>
+  <div class="flexbox">
+    <nav class="main-nav hide-on-mobiles">
+      <ul>
+  <li class="">
+    <a href="/">Home</a>
+  </li>
+  <p>
+  This machine is one of my favorites. It remind me the good old days when I was 14 years old and spending a lot of nights on IRK channels tring to hang out and stand around chit-chatting with girls. ASL PLS was the first line typed in each conversation... But also good days and nights were than when you were able to access C or D drive of that person even pop-up his CD-ROM :))  
+  </p>
+</ul>
+
+    </nav>
+  </div>
+</header>
+
+
+    <section class="news">
+    <div class="grid">
+
+
+
+      <div class="unit four-fifths">
+        <article>
+  <h2>
+    Teacher
+  </h2>
+  <span class="post-category">
+    <span class="label">
+      Walkthroughs
+    </span>
+  </span>
+  <div class="post-meta">
+    <span class="post-date">
+      26 April 2019
+    </span>
+  </div>
+  <p></p>
+  <div class="post-content">
+						<div class="embed-container">
+							<img src="./resources/machine.png" />
+						</div>
+</br>
+						
+    <p><strong>Machine: Teacher<br />
+OS: Linux<br />
+IP: 10.10.10.117</strong></p>
+<p>
+	<div>
+</div><p>Initial scan</p>
+						<div class="embed-container">
+							<img src="./resources/nmap1.PNG" />
+						</div>
+</p>
+<div>
+<p>
+Port after massscan results:
+</p>
+</br>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/nmap2.png" />
+						</div>
+</p>
+<p><a href="https://www.hackingtutorials.org/metasploit-tutorials/hacking-unreal-ircd-3-2-8-1/"> https://www.hackingtutorials.org/metasploit-tutorials/hacking-unreal-ircd-3-2-8-1/ </a>
+</p>
+</br>
+<p>
+Metasploit have a Unreal module for backdoor.
+</p>
+<p>
+						<div class="embed-container">
+							<img src="./resources/msfsearch.png" />
+						</div>
+</p>
+</br>
+<p>
+						<div class="embed-container">
+							<img src="./resources/msf1.png" />
+						</div>
+</p>
+</br>
+<p>
+	My bad for the port used..
+</p>
+</br>
+<p>
+						<div class="embed-container">
+							<img src="./resources/msf2.png" />
+						</div>
+</p>
+<div>
+<p>
+I can see the user flag but not allowed to read it as the creator left it only read writable for priviledged users.</p>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/flag.png" />
+						</div>
+</p>
+</br>
+<p>
+	But I can read the <i>.backup</i> file.
+</p>
+<p>
+						<div class="embed-container">
+							<img src="./resources/backup.png" />
+						</div>
+</p>
+<div>
+	<p>
+UPupDOWNdownLRlrBAbaSSss
+</p>
+</br>
+<p>
+Good for now, let’s have a look around. We can download our own stuff so..
+ </p>
+</br>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/wgetlinenum.png" />
+						</div>
+</p>
+</br>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/linenum.png" />
+						</div>
+</p>
+<div>
+<p>
+But I will do it.
+</br>
+</p>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/suidsearch.png" />
+						</div>
+</p>
+<div>
+<p>
+	Viewuser seems interesting…
+</p>
+</br>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/viewuser.png" />
+						</div>
+</p>
+</br>
+<div>
+And the error is also interesting as it points out to a non-existing file. Create it and write ‘/bin/bash’ into it.
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/listusers.png" />
+						</div>
+</p>
+</br>
+<div>
+	<p>
+This part with LinEnum and file manipulation in tmp folder can be done by any user so both ircd and djmardov.
+</p>
+</br>
+<p>
+Note that we didn’t need djmardov user at all. 
+</p>
+</br>
+Let’s try the ssh service with this password obtained before: UPupDOWNdownLRlrBAbaSSss
+</p>
+</br>
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/ssh.png" />
+						</div>
+</p>
+
+
+</br>
+<div>
+Did not worked but it can be used for an alternative crack. Extracting the hidden file from the website picture for instance.
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/steghide.png" />
+						</div>
+</p>
+
+
+</br>
+<div>
+And this one should be the pass for djmardov user on ssh.
+And yep it worked.
+
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/pass.png" />
+						</div>
+</p>
+
+
+</br>
+<div>
+And this one should be the pass for djmardov user on ssh.
+And yep it worked.
+</div>
+<p>
+						<div class="embed-container">
+							<img src="./resources/sshwork.png" />
+						</div>
+</p>
+
+</br>
+<div>
+I hope you enjoyed the write-up and didn't made you wasting time. Drop me a cup of coffee for Sundays (<a href="https://ko-fi.com/y2xhcmtrzw50"> https://ko-fi.com/y2xhcmtrzw50 </a>) or email me kryptoniteclark@protonmail.com :)
+</div>
+</div>
+</article>
+
+<!-- Default Statcounter code for Clarkkent-repo.github.io
+Curling https://clarkkent-repo.github.io/curling/ -->
+<script type="text/javascript">
+var sc_project=11978300; 
+var sc_invisible=1; 
+var sc_security="bc06325b"; 
+var sc_https=1; 
+</script>
+<script type="text/javascript"
+src="https://www.statcounter.com/counter/counter.js"
+async></script>
+<noscript><div class="statcounter"><a title="Web Analytics
+Made Easy - StatCounter" href="https://statcounter.com/"
+target="_blank"><img class="statcounter"
+src="https://c.statcounter.com/11978300/0/bc06325b/1/"
+alt="Web Analytics Made Easy -
+StatCounter"></a></div></noscript>
+<!-- End of Statcounter Code -->
+
+
+      </div>
+</body>
