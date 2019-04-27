@@ -9,6 +9,9 @@ layout: default
     <nav class="main-nav hide-on-mobiles">
       <ul>
   <li class="">
+    <a href="/irked/index.html">Irked - Linux Machine - Decommissioned: 27.04.2019</a>
+  </li>
+  <li class="">
     <a href="/teacher/index.html">Teacher - Linux Machine - 08.12.2018 - Decommissioned: 20.04.2019</a>
   </li>
   <li class="">
