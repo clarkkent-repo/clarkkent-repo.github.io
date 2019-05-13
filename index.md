@@ -8,6 +8,9 @@ layout: default
   <div class="flexbox">
     <nav class="main-nav hide-on-mobiles">
       <ul>
+<li class="">
+    <a href="/Lightweight/index.html">Lightweight - Linux Machine - Decommissioned: 11.05.2019</a>
+  </li>
   <li class="">
     <a href="/irked/index.html">Irked - Linux Machine - Decommissioned: 27.04.2019</a>
   </li>
